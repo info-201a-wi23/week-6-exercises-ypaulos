@@ -1,10 +1,10 @@
 ---
-title: "The Office Report"
-author: "Your name"
+title: "An Analysis of The Office"
+author: "Yaphet Paulos"
 date: '2023'
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 1. Give the report a new title and add your own name
@@ -15,30 +15,42 @@ output:
 ![](https://static.onecms.io/wp-content/uploads/sites/6/2018/05/gettyimages-141187266-2000.jpg)
 
 Here's a plot of average IMDB rating for each season of The Office.
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-# Load library
-library("dplyr")
-library("ggplot2")
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Load dplyr and ggplot2
+library(dplyr)
+library(ggplot2)
 
 # Load The Office data from this URL:
 # https://raw.githubusercontent.com/melaniewalsh/Neat-Datasets/main/TheOfficeIMDBPerEpisode.csv
 # This data is drawn from Kaggle: https://www.kaggle.com/datasets/kapastor/the-office-imdb-ratings-per-episode
-office_df <- NULL
+
+office_df <- read.csv("https://raw.githubusercontent.com/melaniewalsh/Neat-Datasets/main/TheOfficeIMDBPerEpisode.csv", stringsAsFactors = FALSE)
+
+# convert column to date format
+office_df$AirDate<- as.Date(office_df$AirDate)
+
+# What is the episode(s) with the highest IMDB rating in the dataset?
+# Filter the data and save the row(s) as highest_rating_rows
+highest_rating_rows <- office_df %>% 
+  filter(Rating == max(Rating))
+
+# What is the episode(s) with the lowest IMDB rating in the dataset?
+# Filter the data and save the row(s) as lowest_rating_rows
+lowest_rating_rows <- office_df %>% 
+  filter(Rating == min(Rating))
 
 # Which season of The Office was the best?
-# Calculate the average IMDB rating for each season
-rating_per_season <- NULL
+# Calculate the average IMDB rating for *each season*
+# Save as rating_per_season
+rating_per_season <- office_df %>% group_by(Season) %>% summarize(avg_rating = mean(Rating))
 
-# Now plot the average IMDB rating for each season as a scatterplot, a line plot, or both
-# Your ggplot code here
-```
+# Plot the IMDB rating for every episode of The Office as a line plot
+# with date on the X axis and IMDB rating on the Y axis
+ggplot(data = office_df) + 
+  geom_line(mapping = aes(x = AirDate, y = Rating))
+# Now plot the *average* IMDB rating for *each season* as a scatterplot, a line plot, and both
+ggplot(data = rating_per_season) + 
+  geom_line(mapping = aes(x = Season, y = avg_rating))
 
-```{r, echo=FALSE}
-# Find the highest IMDB rating for any episode of The Office and pull the value
-highest_rating <- NULL
-
-# Find the lowest IMDB rating for any episode of The Office and pull the value
-lowest_rating <- NULL
-```
 
 The highest IMDB rating for any episode of The Office is `r highest_rating`, and the lowest rating is `r lowest_rating`.

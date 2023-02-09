@@ -13,10 +13,14 @@ Each collaborator should make a different change -- make a line plot, add color,
 home_owner <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-09/home_owner.csv')
 
 # Load library
+library(ggplot2)
+library(dplyr)
 # Your code here
 
 # Make a line plot of the percentage of homeowners for racial categories over time
 # and color the plot by racial category
+ggplot(data = home_owner) +
+  geom_line(mapping = aes(x = year, y = home_owner_pct,))
 
-# Your code here
+
 ```
